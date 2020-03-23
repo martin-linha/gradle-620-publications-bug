@@ -1,0 +1,58 @@
+plugins {
+    id 'java'
+    id 'maven-publish'
+}
+
+group 'test'
+
+task customPublication(type: TestArtifact) {
+}
+
+repositories {
+    mavenLocal()
+}
+
+artifacts {
+    archives customPublication
+}
+
+publishing {
+    publications {
+        plugin(MavenPublication) {
+            artifact customPublication
+        }
+    }
+}
+
+class TestArtifact extends DefaultTask implements PublishArtifact {
+
+    @Override
+    String getExtension() {
+        return 'test'
+    }
+
+    @Override
+    String getType() {
+        return 'test'
+    }
+
+    @Override
+    String getClassifier() {
+        return 'test'
+    }
+
+    @Override
+    File getFile() {
+        return project.file('hello.txt')
+    }
+
+    @Override
+    Date getDate() {
+        return new Date()
+    }
+
+    @Override
+    TaskDependency getBuildDependencies() {
+        return [getDependencies: { return Collections.singleton(this) }] as TaskDependency
+    }
+}
